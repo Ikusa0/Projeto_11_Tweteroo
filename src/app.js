@@ -142,8 +142,9 @@ app.post("/sing-up", (req, res) => {
 });
 
 app.post("/tweets", (req, res) => {
-  const tweet = req.body;
-  tweets.push(tweet);
+  const tweet = req.body.tweet;
+  const username = req.header("username");
+  tweets.push({ username, tweet });
   res.status(201).send("OK");
 });
 
