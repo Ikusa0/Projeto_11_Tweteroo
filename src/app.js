@@ -151,8 +151,7 @@ app.get("/tweets", (req, res) => {
   const page = parseInt(req.query.page);
   if (!page || page < 1) {
     res.status(400).send("Informe uma página válida!");
-  }
-  if (page === 1) {
+  } else if (page === 1) {
     res.send(tweets.slice(-10).reverse());
   } else {
     res.send(tweets.slice(-10 * page, -10 * page + 10).reverse());
