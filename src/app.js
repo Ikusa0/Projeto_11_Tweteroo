@@ -168,7 +168,7 @@ app.get("/tweets/:username", (req, res) => {
     const userTweets = tweets
       .filter((tweet) => tweet.username === username)
       .map((tweet) => ({ username, avatar, tweet: tweet.tweet }));
-    res.send(userTweets);
+    res.send(userTweets.reverse());
   } else {
     res.send([]);
   }
