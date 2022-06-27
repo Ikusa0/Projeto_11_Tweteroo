@@ -169,10 +169,10 @@ app.post("/sign-up", (req, res) => {
   const user = req.body;
   if (!user.username || !user.avatar) {
     res.status(400).send("Todos os campos são obrigatórios!");
-  } else {
-    users.push(user);
-    res.status(201).send("OK");
+    return;
   }
+  users.push(user);
+  res.status(201).send("OK");
 });
 
 app.post("/tweets", (req, res) => {
@@ -180,6 +180,7 @@ app.post("/tweets", (req, res) => {
   const username = req.header("user");
   if (!tweet || !username) {
     res.status(400).send("Todos os campos são obrigatórios!");
+    return;
   }
   let avatar = users.find((user) => user.username === username);
   if (avatar) {
@@ -193,26 +194,27 @@ app.get("/tweets", (req, res) => {
   const page = parseInt(req.query.page);
   if (!page || page < 1) {
     res.status(400).send("Informe uma página válida!");
-  } else if (page === 1) {
-    res.send(tweets.slice(-10).reverse());
-  } else {
-    res.send(tweets.slice(-10 * page, -10 * page + 10).reverse());
+    return;
   }
+  if (page === 1) {
+    res.send(tweets.slice(-10).reverse());
+    return;
+  }
+  res.send(tweets.slice(-10 * page, -10 * page + 10).reverse());
 });
 
 app.get("/tweets/:username", (req, res) => {
   const username = req.params.username;
   const user = users.find((user) => user.username === username);
-  let avatar;
-  if (user) {
-    avatar = user.avatar;
-    const userTweets = tweets
-      .filter((tweet) => tweet.username === username)
-      .map((tweet) => ({ username, avatar, tweet: tweet.tweet }));
-    res.send(userTweets.reverse());
-  } else {
+  if (!user) {
     res.send([]);
+    return;
   }
+  const avatar = user.avatar;
+  const userTweets = tweets
+    .filter((tweet) => tweet.username === username)
+    .map((tweet) => ({ username, avatar, tweet: tweet.tweet }));
+  res.send(userTweets.reverse());
 });
 
 app.listen(5000, () => {
